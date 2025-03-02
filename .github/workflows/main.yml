@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: 
+
+jobs:
+  ssh-session:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install tmate
+        run: sudo apt-get update && sudo apt-get install -y tmate
+
+      - name: Start tmate session
+        run: |
+          tmate -S /tmp/tmate.sock new-session -d
+          tmate -S /tmp/tmate.sock wait tmate-ready
+          echo "SSH access:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+          echo "Web access:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
+
+      - name: Keep alive
+        run: |
+          while true; do sleep 60; done
